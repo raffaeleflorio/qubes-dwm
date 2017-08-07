@@ -1,5 +1,5 @@
---- dwm_back.c	2017-08-07 15:33:58.756492026 +0200
-+++ dwm.c	2017-08-07 15:33:52.339492026 +0200
+--- dwm_back.c	2017-08-07 17:58:16.968174807 +0200
++++ dwm.c	2017-08-07 17:57:22.497174807 +0200
 @@ -56,7 +56,6 @@
  #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
  #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
@@ -35,7 +35,7 @@
  			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
 -			drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->name, 0);
 +			int size = strlen(m->sel->vmname) + strlen(m->sel->name) + 4;
-+			char *content = malloc(size);
++			char *content = ecalloc(size, 1);
 +			snprintf(content, size, "[%s] %s", m->sel->vmname, m->sel->name);
 +			drw_text(drw, x, 0, w, bh, lrpad / 2, content, 0);
 +			scheme[SchemeSel][ColBg].pixel = backPixel;
@@ -118,7 +118,7 @@
 +	Atom id = XInternAtom(dpy, "_QUBES_VMNAME", True);
 +
 +	if (id == None) {
-+		c->vmname = malloc(5);
++		c->vmname = ecalloc(5, 1);
 +		strcpy(c->vmname, "Dom0");
 +	} else {
 +		Atom actual_type;
@@ -131,11 +131,11 @@
 +				   &actual_type, &actual_format, &nitems, &nbytes, (unsigned char **) &value);
 +		
 +		if (nitems) {
-+			c->vmname = malloc(nitems + 1);
++			c->vmname = ecalloc(nitems + 1, 1);
 +			strncpy(c->vmname, value, nitems);
 +			c->vmname[nitems] = '\0';
 +		} else {
-+			c->vmname = malloc(5);
++			c->vmname = ecalloc(5, 1);
 +			strcpy(c->vmname, "Dom0");
 +		}
 +
