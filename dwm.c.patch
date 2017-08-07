@@ -1,0 +1,158 @@
+--- dwm_back.c	2017-08-07 15:33:58.756492026 +0200
++++ dwm.c	2017-08-07 15:33:52.339492026 +0200
+@@ -56,7 +56,6 @@
+ #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
+ #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
+ #define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
+-#define ColBorder               2
+ 
+ /* enums */
+ enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
+@@ -87,6 +86,8 @@
+ typedef struct Client Client;
+ struct Client {
+ 	char name[256];
++	unsigned long vmcolor;
++	char *vmname;
+ 	float mina, maxa;
+ 	int x, y, w, h;
+ 	int oldx, oldy, oldw, oldh;
+@@ -204,6 +205,8 @@
+ static void setmfact(const Arg *arg);
+ static void setup(void);
+ static void seturgent(Client *c, int urg);
++static void setvmcolor(Client *c);
++static void setvmname(Client *c);
+ static void showhide(Client *c);
+ static void sigchld(int unused);
+ static void spawn(const Arg *arg);
+@@ -731,8 +734,15 @@
+ 
+ 	if ((w = m->ww - sw - x) > bh) {
+ 		if (m->sel) {
++			unsigned long backPixel = scheme[SchemeSel][ColBg].pixel;
++			scheme[SchemeSel][ColBg].pixel = m->sel->vmcolor;
+ 			drw_setscheme(drw, scheme[m == selmon ? SchemeSel : SchemeNorm]);
+-			drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->name, 0);
++			int size = strlen(m->sel->vmname) + strlen(m->sel->name) + 4;
++			char *content = malloc(size);
++			snprintf(content, size, "[%s] %s", m->sel->vmname, m->sel->name);
++			drw_text(drw, x, 0, w, bh, lrpad / 2, content, 0);
++			scheme[SchemeSel][ColBg].pixel = backPixel;
++			free(content);
+ 			if (m->sel->isfloating)
+ 				drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
+ 		} else {
+@@ -796,7 +806,7 @@
+ 		detachstack(c);
+ 		attachstack(c);
+ 		grabbuttons(c, 1);
+-		XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
++		XSetWindowBorder(dpy, c->win, c->vmcolor);
+ 		setfocus(c);
+ 	} else {
+ 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
+@@ -1032,6 +1042,8 @@
+ 	c->h = c->oldh = wa->height;
+ 	c->oldbw = wa->border_width;
+ 
++	setvmname(c);
++	setvmcolor(c);
+ 	updatetitle(c);
+ 	if (XGetTransientForHint(dpy, w, &trans) && (t = wintoclient(trans))) {
+ 		c->mon = t->mon;
+@@ -1053,7 +1065,7 @@
+ 
+ 	wc.border_width = c->bw;
+ 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
+-	XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColBorder].pixel);
++	XSetWindowBorder(dpy, w, c->vmcolor);
+ 	configure(c); /* propagates border_width, if size doesn't change */
+ 	updatewindowtype(c);
+ 	updatesizehints(c);
+@@ -1571,7 +1583,7 @@
+ 	/* init appearance */
+ 	scheme = ecalloc(LENGTH(colors), sizeof(Scm));
+ 	for (i = 0; i < LENGTH(colors); i++)
+-		scheme[i] = drw_scm_create(drw, colors[i], 3);
++		scheme[i] = drw_scm_create(drw, colors[i], 2);
+ 	/* init bars */
+ 	updatebars();
+ 	updatestatus();
+@@ -1613,6 +1625,67 @@
+ }
+ 
+ void
++setvmcolor(Client *c)
++{
++	Atom id = XInternAtom(dpy, "_QUBES_LABEL_COLOR", True);
++
++	if (id == None) {
++		XftColor xft;
++		drw_clr_create(drw, &xft, col_dom0);
++		c->vmcolor = xft.pixel;
++	} else {
++		Atom actual_type;
++		int actual_format;
++		unsigned long nitems;
++		unsigned long nbytes;
++		unsigned long *value = NULL;
++	
++		XGetWindowProperty(dpy, c->win, id, 0, 1, False, XA_CARDINAL,
++				   &actual_type, &actual_format, &nitems, &nbytes, (unsigned char **) &value);
++
++		if (nitems) {
++			c->vmcolor = value[0];
++		} else {
++			XftColor xft;
++			drw_clr_create(drw, &xft, col_dom0);
++			c->vmcolor = xft.pixel;
++		}
++		XFree(value);
++	}
++}
++
++void
++setvmname(Client *c)
++{
++	Atom id = XInternAtom(dpy, "_QUBES_VMNAME", True);
++
++	if (id == None) {
++		c->vmname = malloc(5);
++		strcpy(c->vmname, "Dom0");
++	} else {
++		Atom actual_type;
++		int actual_format;
++		unsigned long nitems;
++		unsigned long nbytes;
++		char *value = NULL;
++	
++		XGetWindowProperty(dpy, c->win, id, 0, ~(0L), False, XA_STRING,
++				   &actual_type, &actual_format, &nitems, &nbytes, (unsigned char **) &value);
++		
++		if (nitems) {
++			c->vmname = malloc(nitems + 1);
++			strncpy(c->vmname, value, nitems);
++			c->vmname[nitems] = '\0';
++		} else {
++			c->vmname = malloc(5);
++			strcpy(c->vmname, "Dom0");
++		}
++
++		XFree(value);
++	}
++}
++
++void
+ showhide(Client *c)
+ {
+ 	if (!c)
+@@ -1754,7 +1827,7 @@
+ 	if (!c)
+ 		return;
+ 	grabbuttons(c, 0);
+-	XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColBorder].pixel);
++	XSetWindowBorder(dpy, c->win, c->vmcolor);
+ 	if (setfocus) {
+ 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
+ 		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);

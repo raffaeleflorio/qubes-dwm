@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=dwm
+Exec=/usr/local/bin/dwm
+Type=XSession
