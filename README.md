@@ -3,3 +3,6 @@
 Qubes OS patch for dwm 6.1 (http://dwm.suckless.org).
 
 Topbar and border color of windows are colored according domain color. Furthermore window title include domain name in bracket, accordinf to https://qubes-os.org/doc/gui.
+
+# dmenu patch
+You can download a patch for dmenu 4.7 at https://github.com/raffaeleflorio/qubes-dmenu
