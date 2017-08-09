@@ -9,14 +9,14 @@ You can download a patch for dmenu 4.7 at https://github.com/raffaeleflorio/qube
 
 # Installation instruction
 Clone this repo in a vm:
-`$ git clone https://github.com/raffaeleflorio/qubes-dwm.git`
+```$ git clone https://github.com/raffaeleflorio/qubes-dwm.git```
 Check signature (you can get my pgp key from https://raffaeleflorio.github.io or from pgp.mit.edu, of course check its fingerprint):
-`$ git log --show-signature -1`
+```$ git log --show-signature -1```
 
 Clone dwm in a vm. The code with various clone urls is here: http://git.suckless.org/dwm
 
 Third copy the patch in dwm directory:
-`$ cp qubes-dwm/dwm-6.1.patch dwm/`
+```$ cp qubes-dwm/dwm-6.1.patch dwm/```
 
 Apply the patch:
 ```
@@ -38,7 +38,7 @@ Dom0# chmod u+x /usr/local/bin/dwm
 ```
 
 Copy qubes-dwm/dwm.desktop to dom0:
-`Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/dwm.desktop" > /usr/share/xsessions/dwm.desktop`
+```Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/dwm.desktop" > /usr/share/xsessions/dwm.desktop```
 
 Log out, choose dwm as session, log in and use it!
 
