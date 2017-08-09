@@ -19,7 +19,7 @@ $ git log --show-signature -1
 
 Clone dwm in the same vm. The code with various clone urls is here: http://git.suckless.org/dwm
 
-Third copy the patch in dwm directory:
+Copy the patch in the dwm directory:
 ```
 $ cp qubes-dwm/dwm-6.1.patch dwm/
 ```
@@ -28,7 +28,7 @@ Apply the patch:
 ```
 $ cd dwm
 $ make config.h
-$ git apply dwm/dwm-6.1.patch
+$ git apply dwm-6.1.patch
 ```
 
 Install dependecies and compile dwm:
