@@ -2,7 +2,7 @@
 
 Qubes OS patch for dwm 6.1 (http://dwm.suckless.org).
 
-Topbar and border color of windows are colored according domain color. Furthermore window title include domain name in bracket, accordinf to https://qubes-os.org/doc/gui.
+Topbar and border color of windows are colored according domain color. Furthermore window title include domain name in bracket, according to https://qubes-os.org/doc/gui.
 
 # dmenu patch
 You can download a patch for dmenu 4.7 at https://github.com/raffaeleflorio/qubes-dmenu
@@ -12,7 +12,7 @@ Clone this repo in a vm:
 ```
 $ git clone https://github.com/raffaeleflorio/qubes-dwm.git
 ```
-Check signature (you can get my pgp key from https://raffaeleflorio.github.io or from pgp.mit.edu, of course check its fingerprint):
+Check signature (you can get my pgp key from https://raffaeleflorio.github.io or from https://pgp.mit.edu, of course check its fingerprint):
 ```
 $ git log --show-signature -1
 ```
@@ -50,4 +50,4 @@ Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/dwm.desktop" > /usr/sha
 
 Log out, choose dwm as session, log in and use it!
 
-If you encounter some problem, contact me!
+If you encounter some problems, contact me!
