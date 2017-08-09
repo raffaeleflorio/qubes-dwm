@@ -1,5 +1,5 @@
 diff --git a/config.h b/config.h
-index a9ac303..87fea58 100644
+index a9ac303..762b4ef 100644
 --- a/config.h
 +++ b/config.h
 @@ -1,34 +1,36 @@
@@ -63,8 +63,8 @@ index a9ac303..87fea58 100644
  static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 -static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 -static const char *termcmd[]  = { "st", NULL };
-+static const char *dmenu_dom0[] = { "dmenu_dom0", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_dom0, "-sf", col_white, NULL };
-+static const char *dmenu_vms[] = { "dmenu_vms", "-a", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_dom0, "-sf", col_white, NULL };
++static const char *dmenu_dom0[] = { "dmenu_run", "dom0", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_dom0, "-sf", col_white, NULL };
++static const char *dmenu_vms[] = { "dmenu_run", "vms", "-a", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_dom0, "-sf", col_white, NULL };
 +static const char *termcmd[]  = { "xfce4-terminal", NULL };
  
  static Key keys[] = {
