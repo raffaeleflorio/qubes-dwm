@@ -17,7 +17,10 @@ Check signature (you can get my pgp key from https://raffaeleflorio.github.io or
 $ git log --show-signature -1
 ```
 
-Clone dwm in the same vm. The code with various clone urls is here: http://git.suckless.org/dwm
+Clone dwm in the same vm. The code is here: https://git.suckless.org/dwm
+```
+$ git clone  https://git.suckless.org/dwm
+```
 
 Copy the patch in the dwm directory:
 ```
