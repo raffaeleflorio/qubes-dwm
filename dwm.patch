@@ -76,7 +76,7 @@ index a9ac303..762b4ef 100644
  	{ MODKEY,                       XK_b,      togglebar,      {0} },
  	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 diff --git a/dwm.c b/dwm.c
-index a5ce993..3e48c32 100644
+index 4782343..6e6c7d0 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -56,7 +56,6 @@
@@ -176,7 +176,7 @@ index a5ce993..3e48c32 100644
 +		unsigned long nitems;
 +		unsigned long nbytes;
 +		unsigned long *value = NULL;
-+	
++
 +		XGetWindowProperty(dpy, c->win, id, 0, 1, False, XA_CARDINAL,
 +				   &actual_type, &actual_format, &nitems, &nbytes, (unsigned char **) &value);
 +
@@ -205,10 +205,10 @@ index a5ce993..3e48c32 100644
 +		unsigned long nitems;
 +		unsigned long nbytes;
 +		char *value = NULL;
-+	
++
 +		XGetWindowProperty(dpy, c->win, id, 0, ~(0L), False, XA_STRING,
 +				   &actual_type, &actual_format, &nitems, &nbytes, (unsigned char **) &value);
-+		
++
 +		if (nitems) {
 +			c->vmname = ecalloc(nitems + 1, 1);
 +			strncpy(c->vmname, value, nitems);

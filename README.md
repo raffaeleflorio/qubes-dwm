@@ -1,53 +1,33 @@
 # qubes-dwm
 
-Qubes OS patch for dwm 6.1 (http://dwm.suckless.org).
+dwm for Qubes OS.
 
 Topbar and border color of windows are colored according domain color. Furthermore window title include domain name in bracket, according to https://qubes-os.org/doc/gui.
 
 # dmenu patch
-You can download a patch for dmenu 4.7 at https://github.com/raffaeleflorio/qubes-dmenu
+You can download dmenu for Qubes OS at https://github.com/raffaeleflorio/qubes-dmenu
 
 # Installation instruction
 Clone this repo in a vm:
 ```
 $ git clone https://github.com/raffaeleflorio/qubes-dwm.git
 ```
+
 Check signature (you can get my pgp key from https://raffaeleflorio.github.io or from https://pgp.mit.edu, of course check its fingerprint):
 ```
 $ git log --show-signature -1
 ```
 
-Clone dwm in the same vm. The code is here: https://git.suckless.org/dwm
+Install dependencies, apply the patch and build dwm:
 ```
-$ git clone  https://git.suckless.org/dwm
-```
-
-Copy the patch in the dwm directory:
-```
-$ cp qubes-dwm/dwm-6.1.patch dwm/
-```
-
-Apply the patch:
-```
-$ cd dwm
-$ make config.h
-$ git apply dwm-6.1.patch
-```
-
-Install dependecies and compile dwm:
-```
-# dnf install $(cat dependencies)
+# make dep
 $ make
 ```
 
-Copy compiled dwm and set executable bit to Dom0:
+Install in Dom0:
 ```
-Dom0# qvm-run --pass-io <vmname> "cat /path/to/dwm/dwm" > /usr/local/bin/dwm
+Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/dwm/dwm" > /usr/local/bin/dwm
 Dom0# chmod u+x /usr/local/bin/dwm
-```
-
-Copy qubes-dwm/dwm.desktop to dom0:
-```
 Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/dwm.desktop" > /usr/share/xsessions/dwm.desktop
 ```
 
