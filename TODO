@@ -1,3 +1,2 @@
 - make rpm
-- /etc/xdg/autostart/
-- Integrate a systray
+- /etc/xdg/autostart/ using external program
