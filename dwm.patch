@@ -83,7 +83,7 @@ index 2d824d1..947facb 100644
  	{ MODKEY,                       XK_b,      togglebar,      {0} },
  	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 diff --git a/dwm.c b/dwm.c
-index 8e2bf05..ef64b6b 100644
+index bb5929b..1943256 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -104,6 +104,8 @@ typedef struct Monitor Monitor;
@@ -157,10 +157,11 @@ index 8e2bf05..ef64b6b 100644
  	/* init system tray */
  	updatesystray();
  	/* init bars */
-@@ -1797,6 +1810,66 @@ seturgent(Client *c, int urg)
+@@ -1797,6 +1810,67 @@ seturgent(Client *c, int urg)
  	XFree(wmh);
  }
  
++void
 +setvmcolor(Client *c)
 +{
 +	Atom id = XInternAtom(dpy, "_QUBES_LABEL_COLOR", True);
@@ -224,7 +225,7 @@ index 8e2bf05..ef64b6b 100644
  void
  showhide(Client *c)
  {
-@@ -1826,7 +1899,7 @@ sigchld(int unused)
+@@ -1826,7 +1900,7 @@ sigchld(int unused)
  void
  spawn(const Arg *arg)
  {
@@ -233,7 +234,7 @@ index 8e2bf05..ef64b6b 100644
  		dmenumon[0] = '0' + selmon->num;
  	if (fork() == 0) {
  		if (dpy)
-@@ -1950,7 +2023,7 @@ unfocus(Client *c, int setfocus)
+@@ -1950,7 +2024,7 @@ unfocus(Client *c, int setfocus)
  	if (!c)
  		return;
  	grabbuttons(c, 0);
