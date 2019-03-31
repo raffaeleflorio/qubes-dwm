@@ -14,7 +14,7 @@ index 1c0b587..2d824d1 100644
  static const int topbar             = 1;        /* 0 means bottom bar */
  static const char *fonts[]          = { "monospace:size=10" };
 diff --git a/dwm.c b/dwm.c
-index 4465af1..8e2bf05 100644
+index 4465af1..bb5929b 100644
 --- a/dwm.c
 +++ b/dwm.c
 @@ -57,12 +57,30 @@
@@ -550,19 +550,18 @@ index 4465af1..8e2bf05 100644
  		XMapRaised(dpy, m->barwin);
  		XSetClassHint(dpy, m->barwin, &ch);
  	}
-@@ -2001,6 +2211,129 @@ updatetitle(Client *c)
+@@ -1990,6 +2200,7 @@ updatestatus(void)
+ 	if (!gettextprop(root, XA_WM_NAME, stext, sizeof(stext)))
+ 		strcpy(stext, "dwm-"VERSION);
+ 	drawbar(selmon);
++	updatesystray();
+ }
+ 
+ void
+@@ -2001,6 +2212,120 @@ updatetitle(Client *c)
  		strcpy(c->name, broken);
  }
  
-+void
-+updatestatus(void)
-+{
-+	if (!gettextprop(root, XA_WM_NAME, stext, sizeof(stext)))
-+		strcpy(stext, "dwm-"VERSION);
-+	drawbar(selmon);
-+	updatesystray();
-+}
-+
 +void
 +updatesystrayicongeom(Client *i, int w, int h)
 +{
@@ -680,7 +679,7 @@ index 4465af1..8e2bf05 100644
  void
  updatewindowtype(Client *c)
  {
-@@ -2057,6 +2390,16 @@ wintoclient(Window w)
+@@ -2057,6 +2382,16 @@ wintoclient(Window w)
  	return NULL;
  }
  
@@ -697,7 +696,7 @@ index 4465af1..8e2bf05 100644
  Monitor *
  wintomon(Window w)
  {
-@@ -2110,6 +2453,22 @@ xerrorstart(Display *dpy, XErrorEvent *ee)
+@@ -2110,6 +2445,22 @@ xerrorstart(Display *dpy, XErrorEvent *ee)
  	return -1;
  }
  
