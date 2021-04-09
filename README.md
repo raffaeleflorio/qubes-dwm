@@ -32,6 +32,8 @@ Install in Dom0:
 ```
 Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/dwm/dwm" > /usr/local/bin/dwm
 Dom0# chmod u+x /usr/local/bin/dwm
+Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/dwm/launchdwm" > /usr/local/bin/launchdwm
+Dom0# chmod u+x /usr/local/bin/launchdwm
 Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/dwm.desktop" > /usr/share/xsessions/dwm.desktop
 ```
 
