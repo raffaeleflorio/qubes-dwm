@@ -37,11 +37,6 @@ Dom0# chmod u+x /usr/local/bin/launchdwm
 Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/dwm.desktop" > /usr/share/xsessions/dwm.desktop
 ```
 
-Install `dex-autostart`, in Dom0, because /etc/xdg/autostart:
-```
-Dom# qubes-dom0-update dex-autostart
-```
-
 Log out, choose dwm as session, log in and use it!
 
 If you encounter some problems, contact me!
