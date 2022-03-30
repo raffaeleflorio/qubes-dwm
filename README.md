@@ -34,6 +34,12 @@ Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/dwm/dwm" > /usr/local/b
 Dom0# chmod u+x /usr/local/bin/dwm
 Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/launchdwm" > /usr/local/bin/launchdwm
 Dom0# chmod u+x /usr/local/bin/launchdwm
+Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/qubes-dmenu-sensible" > /usr/local/bin/qubes-dmenu-sensible
+Dom0# chmod u+x /usr/local/bin/qubes-dmenu-sensible
+Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/qubes-run-sensible" > /usr/local/bin/qubes-run-sensible
+Dom0# chmod u+x /usr/local/bin/qubes-run-sensible
+Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/qubes-sensible-vm-settings" > /usr/local/bin/qubes-sensible-vm-settings
+Dom0# chmod u+x /usr/local/bin/qubes-sensible-vm-settings
 Dom0# qvm-run --pass-io <vmname> "cat /path/to/qubes-dwm/dwm.desktop" > /usr/share/xsessions/dwm.desktop
 ```
 

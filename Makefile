@@ -5,8 +5,8 @@ DEP=libX11-devel libXft-devel libXinerama-devel
 
 build: setup
 	@echo building...
-	git apply --directory=${DWM} dwm-systray-20171101-6aa8e37.diff
-	git apply --directory=${DWM} dwm.patch
+	git apply --directory=${DWM} dwm-qubes-systray.patch
+	git apply --directory=${DWM} dwm-qubes.patch
 	cd ${DWM}; make
 
 setup:
@@ -15,3 +15,6 @@ setup:
 
 dep:
 	dnf install ${DEP}
+
+clean:
+	git submodule deinit --all -f
