@@ -5,7 +5,7 @@ DEP=libX11-devel libXft-devel libXinerama-devel
 
 build: setup
 	@echo building...
-	git apply --directory=${DWM} dwm-qubes-systray.patch
+	git apply --directory=${DWM} dwm-systray-6.2.patch.patch
 	git apply --directory=${DWM} dwm-qubes.patch
 	cd ${DWM}; make
 

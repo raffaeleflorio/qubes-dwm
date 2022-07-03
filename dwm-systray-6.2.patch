@@ -1,3 +1,16 @@
+From 4001ccae7b1a41bdcb247b0cf095a51af7b68c28 Mon Sep 17 00:00:00 2001
+From: Igor Gevka <igor.gevka@gmail.com>
+Date: Sun, 16 Feb 2020 15:03:10 -0800
+Subject: [PATCH] [PATCH] Implements a system tray for dwm.
+
+Original author: Jan Christoph Ebersbach <jceb@e-jc.de>, inspired by http://code.google.com/p/dwm-plus
+URL: http://dwm.suckless.org/patches/systray
+dwm 6.2 port by Igor Gevka <igor.gevka@gmail.com>
+---
+ config.def.h |   4 +
+ dwm.c        | 404 +++++++++++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 382 insertions(+), 26 deletions(-)
+
 diff --git a/config.def.h b/config.def.h
 index 1c0b587..2d824d1 100644
 --- a/config.def.h

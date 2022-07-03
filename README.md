@@ -1,6 +1,6 @@
 # qubes-dwm
 
-dwm (https://dwm.suckless.org) for Qubes OS.
+dwm (https://dwm.suckless.org) for Qubes OS 4.0.x / 4.1.x.
 
 Topbar and border color of windows are colored according domain color. Furthermore window title include domain name in bracket, according to https://qubes-os.org/doc/gui.
 
