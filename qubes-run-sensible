@@ -1,0 +1,35 @@
+#!/bin/bash
+
+run_cmd='
+for t in "$APP" APPS; do
+    command -v "$t" > /dev/null 2>&1 && exec "$t";
+done
+'
+
+get_id() {
+    local id=$(xprop -root _NET_ACTIVE_WINDOW)
+    echo ${id##* } # extract id
+}
+
+get_vm() {
+    local id=$(get_id)
+    local vm=$(xprop -id $id | grep '_QUBES_VMNAME(STRING)')
+    local vm=${vm#*\"} # extract vmname
+    echo ${vm%\"*} # extract vmname
+}
+
+main() {
+    local vm=$(get_vm)
+    run_cmd=${run_cmd/APPS/$@}
+    if [[ -n "$vm" ]]; then
+        if command -v qrexec-client >/dev/null; then
+            qrexec-client -e -d "$vm" DEFAULT:"bash -c '$run_cmd'"
+        else
+            qvm-run "$vm" qvm-run "$vm" "bash -c '$run_cmd'"
+        fi
+    else # run terminal in dom0
+        exec bash -c "$run_cmd"
+    fi
+}
+
+main 

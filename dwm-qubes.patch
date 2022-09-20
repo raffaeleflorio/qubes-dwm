@@ -1,8 +1,21 @@
+diff --git a/config.mk b/config.mk
+index 4eefb71..34ea872 100644
+--- a/config.mk
++++ b/config.mk
+@@ -22,7 +22,7 @@ FREETYPEINC = /usr/include/freetype2
+ 
+ # includes and libs
+ INCS = -I${X11INC} -I${FREETYPEINC}
+-LIBS = -L${X11LIB} -lX11 ${XINERAMALIBS} ${FREETYPELIBS}
++LIBS = -L${X11LIB} -lX11 ${XINERAMALIBS} ${FREETYPELIBS} -lX11-xcb -lxcb -lxcb-res
+ 
+ # flags
+ CPPFLAGS = -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L -DVERSION=\"${VERSION}\" ${XINERAMAFLAGS}
 diff --git a/config.def.h b/config.def.h
-index bb623f0..e8b8c2a 100644
+index 2d824d1..947facb 100644
 --- a/config.def.h
 +++ b/config.def.h
-@@ -1,7 +1,7 @@
+@@ -1,38 +1,42 @@
  /* See LICENSE file for copyright and license details. */
  
  /* appearance */
@@ -11,7 +24,10 @@ index bb623f0..e8b8c2a 100644
  static const unsigned int snap      = 32;       /* snap pixel */
  static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
  static const unsigned int systrayspacing = 2;   /* systray spacing */
-@@ -11,28 +11,30 @@ static const int showbar            = 1;        /* 0 means no bar */
+ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
+-static const int showsystray        = 1;     /* 0 means no systray */
++static const int showsystray        = 1;        /* 0 means no systray */
+ static const int showbar            = 1;        /* 0 means no bar */
  static const int topbar             = 1;        /* 0 means bottom bar */
  static const char *fonts[]          = { "monospace:size=10" };
  static const char dmenufont[]       = "monospace:size=10";
@@ -28,7 +44,7 @@ index bb623f0..e8b8c2a 100644
 -	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
 +/* Dom0 Colors, tagbar and status bar */
 +static const char *colors[][2]      = {
-+	/*               fg         bg         */
++	/*               fg         bg        */
 +	[SchemeNorm] = { col_gray3, col_gray1 },
 +	[SchemeSel]  = { col_white, col_dom0  },
  };
@@ -45,51 +61,51 @@ index bb623f0..e8b8c2a 100644
 -	/* class      instance    title       tags mask     isfloating   monitor */
 -	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 -	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
-+	/* class   instance    title                      tags mask     isfloating   monitor */
-+	{ NULL,    NULL,       "Qubes VM Manager" ,       1 << 8,       1,           -1}
++	/* class   				 instance    title         tags mask     isfloating   monitor */
++	{ "Qubes-qube-manager",  NULL,       NULL,         NULL,         0,           -1},
++	{ "Pinentry-gtk-2",      NULL,       NULL,         NULL,         1,           -1},	// split-gpg
++	{ "Zenity",    		 	 NULL,       NULL,         NULL,         1,           -1}	// split-gpg
  };
- 
+
  /* layout(s) */
-@@ -48,7 +50,7 @@ static const Layout layouts[] = {
- };
- 
- /* key definitions */
--#define MODKEY Mod1Mask
-+#define MODKEY Mod4Mask
- #define TAGKEYS(KEY,TAG) \
- 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
- 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-@@ -60,12 +62,14 @@ static const Layout layouts[] = {
+@@ -59,13 +61,19 @@ /* helper for spawning shell commands in the pre dwm-5.0 fashion */
+ #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
  
  /* commands */
- static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
+-static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 -static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 -static const char *termcmd[]  = { "st", NULL };
-+static const char *dmenu_dom0[] = { "dmenu_run", "dom0", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_dom0, "-sf", col_white, NULL };
-+static const char *dmenu_vms[] = { "dmenu_run", "vms", "-a", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_dom0, "-sf", col_white, NULL };
-+static const char *termcmd[]  = { "xfce4-terminal", NULL };
- 
++static char dmenumon[2] = "0";  /* component of dmenucmd, manipulated in spawn() */
++static const char *dmenu_dom0[] = { "dmenu_run", "dom0",       "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_dom0, "-sf", col_white, NULL };
++static const char *dmenu_sensible[]  = { "qubes-dmenu-sensible", "-a", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_dom0, "-sf", col_white, NULL };
++static const char *dmenu_vms[]  = { "dmenu_run", "vms",  "-a", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_dom0, "-sf", col_white, NULL };
++static const char *termcmd[]    = { "qubes-run-sensible", "x-terminal-emulator", "urxvt", "rxvt", "termit", "terminator", "Eterm", "aterm", "gnome-terminal", "konsole", "roxterm", "xfce4-terminal", "termite", "lxterminal", "mate-terminal", "terminology", "st", "xterm", NULL};
++static const char *qubesmanagercmd[]    = { "qubes-qube-manager", NULL };
+
  static Key keys[] = {
  	/* modifier                     key        function        argument */
 -	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-+	{ MODKEY,                       XK_p,      spawn,          {.v = dmenu_dom0 } },
++	{ MODKEY,                       XK_p,      spawn,          {.v = dmenu_sensible } },
 +	{ MODKEY|ShiftMask,             XK_p,      spawn,          {.v = dmenu_vms} },
++	{ MODKEY|ControlMask|ShiftMask, XK_p,      spawn,          {.v = dmenu_dom0} },
++	{ MODKEY|ShiftMask,             XK_m,      spawn,          {.v = qubesmanagercmd} },
  	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
  	{ MODKEY,                       XK_b,      togglebar,      {0} },
  	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 diff --git a/dwm.c b/dwm.c
-index fe1f728..d0db845 100644
+index bb5929b..1943256 100644
 --- a/dwm.c
 +++ b/dwm.c
-@@ -56,7 +56,6 @@
- #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
- #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
- #define TEXTW(X)                (drw_fontset_getwidth(drw, (X)) + lrpad)
--#define ColBorder               2
+@@ -40,6 +40,8 @@
+ #include <X11/extensions/Xinerama.h>
+ #endif /* XINERAMA */
+ #include <X11/Xft/Xft.h>
++#include <X11/Xlib-xcb.h>
++#include <xcb/res.h>
  
- #define SYSTEM_TRAY_REQUEST_DOCK    0
- 
-@@ -105,6 +104,8 @@ typedef struct Monitor Monitor;
+ #include "drw.h"
+ #include "util.h"
+@@ -104,6 +104,8 @@ typedef struct Monitor Monitor;
  typedef struct Client Client;
  struct Client {
  	char name[256];
@@ -98,7 +114,7 @@ index fe1f728..d0db845 100644
  	float mina, maxa;
  	int x, y, w, h;
  	int oldx, oldy, oldw, oldh;
-@@ -233,6 +234,8 @@ static void setlayout(const Arg *arg);
+@@ -232,6 +234,8 @@ static void setlayout(const Arg *arg);
  static void setmfact(const Arg *arg);
  static void setup(void);
  static void seturgent(Client *c, int urg);
@@ -107,9 +123,18 @@ index fe1f728..d0db845 100644
  static void showhide(Client *c);
  static void sigchld(int unused);
  static void spawn(const Arg *arg);
-@@ -824,8 +827,15 @@ drawbar(Monitor *m)
+@@ -267,6 +278,8 @@ static Drw *drw;
+ static Monitor *mons, *selmon;
+ static Window root, wmcheckwin;
  
- 	if ((w = m->ww - sw - stw - x) > bh) {
++static xcb_connection_t *xcon;
++
+ /* configuration, allows nested code to access above variables */
+ #include "config.h"
+ 
+@@ -824,8 +828,15 @@ drawbar(Monitor *m)
+ 
+ 	if ((w = m->ww - tw - stw - x) > bh) {
  		if (m->sel) {
 +			unsigned long backPixel = scheme[SchemeSel][ColBg].pixel;
 +			scheme[SchemeSel][ColBg].pixel = m->sel->vmcolor;
@@ -124,7 +149,7 @@ index fe1f728..d0db845 100644
  			if (m->sel->isfloating)
  				drw_rect(drw, x + boxs, boxs, boxw, boxw, m->sel->isfixed, 0);
  		} else {
-@@ -892,7 +902,7 @@ focus(Client *c)
+@@ -892,7 +903,7 @@ focus(Client *c)
  		detachstack(c);
  		attachstack(c);
  		grabbuttons(c, 1);
@@ -133,7 +158,7 @@ index fe1f728..d0db845 100644
  		setfocus(c);
  	} else {
  		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
-@@ -1146,6 +1156,8 @@ manage(Window w, XWindowAttributes *wa)
+@@ -1145,6 +1156,8 @@ manage(Window w, XWindowAttributes *wa)
  	c->h = c->oldh = wa->height;
  	c->oldbw = wa->border_width;
  
@@ -142,7 +167,7 @@ index fe1f728..d0db845 100644
  	updatetitle(c);
  	if (XGetTransientForHint(dpy, w, &trans) && (t = wintoclient(trans))) {
  		c->mon = t->mon;
-@@ -1167,7 +1179,7 @@ manage(Window w, XWindowAttributes *wa)
+@@ -1166,7 +1179,7 @@ manage(Window w, XWindowAttributes *wa)
  
  	wc.border_width = c->bw;
  	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
@@ -151,46 +176,47 @@ index fe1f728..d0db845 100644
  	configure(c); /* propagates border_width, if size doesn't change */
  	updatewindowtype(c);
  	updatesizehints(c);
-@@ -1755,7 +1767,7 @@ setup(void)
+@@ -1754,7 +1767,7 @@ setup(void)
  	/* init appearance */
- 	scheme = ecalloc(LENGTH(colors), sizeof(Scm));
+ 	scheme = ecalloc(LENGTH(colors), sizeof(Clr *));
  	for (i = 0; i < LENGTH(colors); i++)
 -		scheme[i] = drw_scm_create(drw, colors[i], 3);
 +		scheme[i] = drw_scm_create(drw, colors[i], 2);
  	/* init system tray */
  	updatesystray();
  	/* init bars */
-@@ -1799,6 +1811,67 @@ seturgent(Client *c, int urg)
+@@ -1797,6 +1810,67 @@ seturgent(Client *c, int urg)
+ 	XFree(wmh);
  }
  
- void
++void
 +setvmcolor(Client *c)
 +{
++	XftColor xft;
++	xcb_get_property_cookie_t qubes_label_cookie;
++
 +	Atom id = XInternAtom(dpy, "_QUBES_LABEL_COLOR", True);
++	qubes_label_cookie = xcb_get_property(xcon, False, c->win, id, XCB_GET_PROPERTY_TYPE_ANY, 0, UINT32_MAX);
++	xcb_get_property_reply_t *prop = xcb_get_property_reply(xcon, qubes_label_cookie, NULL);
 +
-+	if (id == None) {
-+		XftColor xft;
++	if (prop == NULL || xcb_get_property_value_length(prop) == 0) {
++		// dom0
 +		drw_clr_create(drw, &xft, col_dom0);
-+		c->vmcolor = xft.pixel;
 +	} else {
-+		Atom actual_type;
-+		int actual_format;
-+		unsigned long nitems;
-+		unsigned long nbytes;
-+		unsigned long *value = NULL;
-+
-+		XGetWindowProperty(dpy, c->win, id, 0, 1, False, XA_CARDINAL,
-+				   &actual_type, &actual_format, &nitems, &nbytes, (unsigned char **) &value);
-+
-+		if (nitems) {
-+			c->vmcolor = value[0];
-+		} else {
-+			XftColor xft;
++		// qube
++		const int len = xcb_get_property_value_length(prop);
++		unsigned char *qubes_label = (unsigned char*)xcb_get_property_value(prop);
++		if(len == 0) {
 +			drw_clr_create(drw, &xft, col_dom0);
-+			c->vmcolor = xft.pixel;
++		} else {
++			char color[8] = {0};
++			sprintf(color, "#%02x%02x%02x", (unsigned char)qubes_label[2], (unsigned char)qubes_label[1], (unsigned char)qubes_label[0]);
++			drw_clr_create(drw, &xft, color);
 +		}
-+		XFree(value);
 +	}
++
++	c->vmcolor = xft.pixel;
++	free(prop);
 +}
 +
 +void
@@ -209,7 +235,7 @@ index fe1f728..d0db845 100644
 +		char *value = NULL;
 +
 +		XGetWindowProperty(dpy, c->win, id, 0, ~(0L), False, XA_STRING,
-+				   &actual_type, &actual_format, &nitems, &nbytes, (unsigned char **) &value);
++					&actual_type, &actual_format, &nitems, &nbytes, (unsigned char **) &value);
 +
 +		if (nitems) {
 +			c->vmname = ecalloc(nitems + 1, 1);
@@ -224,11 +250,10 @@ index fe1f728..d0db845 100644
 +	}
 +}
 +
-+void
+ void
  showhide(Client *c)
  {
- 	if (!c)
-@@ -1827,7 +1900,7 @@ sigchld(int unused)
+@@ -1826,7 +1900,7 @@ sigchld(int unused)
  void
  spawn(const Arg *arg)
  {
@@ -237,7 +262,7 @@ index fe1f728..d0db845 100644
  		dmenumon[0] = '0' + selmon->num;
  	if (fork() == 0) {
  		if (dpy)
-@@ -1951,7 +2024,7 @@ unfocus(Client *c, int setfocus)
+@@ -1950,7 +2024,7 @@ unfocus(Client *c, int setfocus)
  	if (!c)
  		return;
  	grabbuttons(c, 0);
@@ -246,3 +271,12 @@ index fe1f728..d0db845 100644
  	if (setfocus) {
  		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
  		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
+@@ -2131,6 +2313,8 @@ main(int argc, char *argv[])
+ 		fputs("warning: no locale support\n", stderr);
+ 	if (!(dpy = XOpenDisplay(NULL)))
+ 		die("dwm: cannot open display");
++	if (!(xcon = XGetXCBConnection(dpy)))
++		die("dwm: cannot get xcb connection\n");
+ 	checkotherwm();
+ 	setup();
+ #ifdef __OpenBSD__
